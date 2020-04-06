@@ -392,6 +392,12 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 	struct hid_device_info *cur_dev = NULL;
 	CFIndex num_devices;
 	int i;
+    
+    CFMutableDictionaryRef matchDict = CFDictionaryCreateMutable(
+                                                                 kCFAllocatorDefault,
+                                                                 2,
+                                                                 &kCFTypeDictionaryKeyCallBacks,
+                                                                 &kCFTypeDictionaryValueCallBacks);
 
 	/* Set up the HID Manager if it hasn't been done */
 	if (hid_init() < 0)
@@ -401,7 +407,7 @@ struct hid_device_info  HID_API_EXPORT *hid_enumerate(unsigned short vendor_id, 
 	process_pending_events();
 
 	/* Get a list of the Devices */
-	IOHIDManagerSetDeviceMatching(hid_mgr, NULL);
+	IOHIDManagerSetDeviceMatching(hid_mgr, matchDict);
 	CFSetRef device_set = IOHIDManagerCopyDevices(hid_mgr);
 
 	/* Convert the list into a C array so we can iterate easily. */
